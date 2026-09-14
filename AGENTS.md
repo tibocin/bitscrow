@@ -23,5 +23,9 @@ Canonical pack: `devao/packs/bitscrow/AGENTS.md`. Product facts live in this rep
 
 - Rust reference implementation. No production funds.
 - Agents never receive private keys.
+- Privacy-first locators: never commit live onion, LAN, or public RPC hosts.
+  Placeholders only (`https://<rpc-onion>.onion`, `https://<lan-host>:<rpc-port>`).
+  Real URLs stay in gitignored `.env` / 1Password. Shop policy:
+  `devao/docs/policies/bitcoin-privacy.md`.
 - Do not assume Bitcoin Core Taproot/PSBT semantics on the Blake2b fork.
 - First slice is Phase 0 (fork audit) and Phase 1 (v0.1 spec), not the portal.

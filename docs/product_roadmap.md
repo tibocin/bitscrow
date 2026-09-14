@@ -6,7 +6,7 @@ Before implementing Bitcoin-specific assumptions, document the Bitcoin Blake2b f
 
 Deliverable: a compatibility matrix and Rust test vectors.
 
-Status (2026-09-14, `tkt:bitscrow-p0-matrix`): matrix lives in `docs/fork_capability_matrix.md`. Operator endpoints and blake2b-256 are cited. Most chain semantics remain `unknown`. No CI/regtest fixture.
+Status (2026-09-14, `tkt:bitscrow-p0-matrix`): matrix lives in `docs/fork_capability_matrix.md`. LAN/Tor RPC exist (hosts redacted). BITSCROW digest and fork PoW are both unkeyed blake2b-256 (different messages). Most other chain semantics remain `unknown`. No CI/regtest fixture.
 
 ## Phase 1 — Open Contract Specification
 

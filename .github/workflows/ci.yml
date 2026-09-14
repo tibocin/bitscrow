@@ -18,5 +18,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
-      - name: Phase 0 matrix, fixtures, secret scan
+      - name: Phase 0 matrix, fixtures, secret and locator scan
         run: uv run python scripts/check_phase0.py

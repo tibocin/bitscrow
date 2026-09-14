@@ -8,7 +8,7 @@
 **/*.rs.bk
 Cargo.lock.bak
 
-# Env and local operator config (never commit RPC passwords)
+# Env and local operator config (never commit RPC passwords or live hosts)
 .env
 .env.*
 !.env.example

@@ -9,8 +9,8 @@
       "title": "Node RPC location",
       "status": "cited",
       "source": "operator 2026-09-14",
-      "value": "LAN https://192.168.4.177:57713 ; Tor https://ka7mzfmkd44ulghs56zoyqejizulqd4guf7waqoa3ejffojekub4idyd.onion",
-      "notes": "Operator topology. CI must not connect. Credentials never in git."
+      "value": "LAN https://<lan-host>:<rpc-port> ; Tor https://<rpc-onion>.onion",
+      "notes": "Transports cited; live hosts are locators (gitignored / vault). CI must not connect."
     },
     {
       "id": "rpc-transport",
@@ -106,15 +106,15 @@
       "status": "cited",
       "source": "operator Q2 2026-09-14 + docs/contract_template.yaml commitments.algorithm",
       "value": "blake2b-256",
-      "notes": "Unkeyed BLAKE2b, 32-byte digest. Not blake2s, not blake2b-512, not a keyed MAC."
+      "notes": "Unkeyed BLAKE2b, 32-byte digest of canonical contract state. Same primitive as fork PoW (blake2b-256) but a different message. Not blake2s, not blake2b-512, not a keyed MAC."
     },
     {
       "id": "fork-consensus-hash",
       "title": "Fork txid / block hash algorithm",
-      "status": "unknown",
-      "source": "needs authenticated chainparams / getblockheader",
-      "value": null,
-      "notes": "May also be blake2b; params unconfirmed. Do not equate with bitscrow-digest until cited."
+      "status": "cited",
+      "source": "Knots v29.4.1.knots20260508 src/primitives/block.cpp GetHash + src/crypto/blake2b.h blake2b_nokey; Knots PR 385 independent recompute of height 961640; bitcoin-blake2b.org developers (first BLAKE2b block 961640, 30 Aug 2026)",
+      "value": "txid/wtxid: SHA256d (unchanged). Block hash from height 961640: unkeyed BLAKE2b-256 (blake2b_nokey, outlen=32), two-pass Knots header-v2 construction over an 80-byte ASIC work header, not a single hash of the 164-byte wire header. Not blake2s, not blake2b-512, not keyed, not Sia personalization.",
+      "notes": "Pre-961640 blocks on this branch remain SHA256d. Do not treat bitscrow-digest as the block hash. Merkle root feeding H1 is still SHA256d."
     }
   ]
 }

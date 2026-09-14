@@ -1,5 +1,5 @@
 # File: scripts/check_phase0.py
-# Purpose: Offline Phase 0 gates: matrix rows, fixture presence, secret patterns.
+# Purpose: Offline Phase 0 gates: matrix rows, fixture presence, secret and locator patterns.
 # Related: docs/fork_capability_matrix.json, docs/fixtures/, .github/workflows/ci.yml
 # Tags: #phase0 #ci #qa
 #
@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -39,6 +40,13 @@ SECRET_PATTERNS = [
     re.compile(r"rpcpassword\s*=\s*(?!op://)\S+"),
     re.compile(r"BITSCROW_RPC_PASSWORD=(?!op://)\S+"),
 ]
+# Live v3 onions and RFC1918 *hosts* (CIDR like 192.168.0.0/16 is allowed).
+ONION_V3 = re.compile(r"\b[a-z2-7]{56}\.onion\b", re.IGNORECASE)
+RFC1918_HOST = re.compile(
+    r"\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+    r"|192\.168\.\d{1,3}\.\d{1,3}"
+    r"|172\.(?:1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3})\b"
+)
 SKIP_SUFFIX = {".png", ".jpg", ".woff", ".woff2"}
 
 
@@ -91,23 +99,48 @@ def check_fixtures() -> None:
         fail("invalid_dirty.yaml must include a YAML merge key")
 
 
+def is_gitignored(path: Path) -> bool:
+    """Operator .env may hold live locators; CI only cares what git would publish."""
+    rel = path.relative_to(ROOT)
+    result = subprocess.run(
+        ["git", "check-ignore", "-q", "--", str(rel)],
+        cwd=ROOT,
+        check=False,
+    )
+    return result.returncode == 0
+
+
 def check_secrets() -> None:
     for path in ROOT.rglob("*"):
         if not path.is_file():
             continue
         if any(part in {".git", "target"} for part in path.parts):
             continue
-        if path.name == "check_phase0.py":
-            continue
         if path.suffix.lower() in SKIP_SUFFIX:
+            continue
+        if is_gitignored(path):
             continue
         try:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             continue
-        for pat in SECRET_PATTERNS:
-            if pat.search(text):
-                fail(f"secret-like pattern {pat.pattern} in {path.relative_to(ROOT)}")
+        if path.name != "check_phase0.py":
+            for pat in SECRET_PATTERNS:
+                if pat.search(text):
+                    fail(f"secret-like pattern {pat.pattern} in {path.relative_to(ROOT)}")
+        check_text_locators(path, text)
+
+
+def check_text_locators(path: Path, text: str) -> None:
+    """Fail closed if a live node locator lands in git."""
+    rel = path.relative_to(ROOT)
+    if ONION_V3.search(text):
+        fail(f"live v3 onion locator in {rel}")
+    for match in RFC1918_HOST.finditer(text):
+        end = match.end()
+        if end < len(text) and text[end] == "/":
+            continue
+        fail(f"RFC1918 host locator in {rel}")
 
 
 def main() -> int:

@@ -51,4 +51,4 @@ Agent contract: [`AGENTS.md`](AGENTS.md).
 
 ## Status
 
-Phase 0 audit is in-tree (`tkt:bitscrow-p0-matrix`). BITSCROW contract-state digest is **blake2b-256**. Fork tx/block hash, network id, and script/tx semantics stay **unknown** until authenticated RPC. CI does not call the node. Do not use with production funds.
+Phase 0 audit is in-tree (`tkt:bitscrow-p0-matrix`). BITSCROW contract-state digest is **blake2b-256**. Fork **block** hash from height 961640 is unkeyed **BLAKE2b-256** (`blake2b_nokey`, 32-byte output) over Knots header-v2 work, not SHA256d and not a single hash of the 164-byte header. Txid stays SHA256d. Network id and script/tx semantics stay **unknown** until authenticated RPC. CI does not call the node. Do not use with production funds.
