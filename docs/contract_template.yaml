@@ -1,0 +1,141 @@
+# BITSCROW v0.1 authoring example.
+# YAML is human-friendly input. Implementations should canonicalize the
+# validated data model before computing contract/state hashes.
+
+protocol:
+  name: "bitscrow"
+  version: "0.1.0"
+  network: "bitcoin-blake2b"
+  contract_id: "<stable-contract-id>"
+  contract_type: "marketplace_escrow"
+
+metadata:
+  created_at: "<rfc3339>"
+  expires_at: "<rfc3339>"
+  title: "<human-readable-title>"
+  description: "<human-readable-description>"
+
+chain_anchor:
+  block_height: <height>
+  block_hash: "<validated-block-hash>"
+  confirmations_required: 6
+
+participants:
+  - id: "party_a"
+    role: "buyer"
+    signing_public_key: "<public-key>"
+    settlement_address: "<fresh-address>"
+    refund_address: "<fresh-refund-address>"
+    required_contribution_sats: 250000
+    collateral_sats: 50000
+
+  - id: "party_b"
+    role: "seller"
+    signing_public_key: "<public-key>"
+    settlement_address: "<fresh-address>"
+    refund_address: "<fresh-refund-address>"
+    required_contribution_sats: 50000
+    collateral_sats: 50000
+
+funding:
+  currency: "sats"
+  required_total_sats: 350000
+  funding_policy:
+    activation: "all_required_contributions_confirmed"
+  outpoints: []
+
+evidence:
+  items:
+    - id: "shipment_record"
+      required: true
+      allowed_submitters: ["party_b"]
+      content_hash: null
+      storage_reference: null
+      media_type: null
+
+commitments:
+  - id: "buyer_receipt_secret"
+    owner: "party_a"
+    algorithm: "blake2b-256"
+    commitment: "<hash-of-secret>"
+    plaintext_secret: null
+
+oracles:
+  - id: "delivery"
+    subject: "shipment_delivery"
+    primary:
+      adapter: "<carrier-api-adapter>"
+      parameters:
+        tracking_reference: "<tracking-reference>"
+    fallback:
+      ordered_steps:
+        - type: "secondary_oracle"
+          adapter: "<secondary-adapter>"
+        - type: "preapproved_query"
+          portal: "<bitscrow-verification-portal>"
+          query_template: "<agreed-query-template>"
+        - type: "participant_confirmation"
+          required_participants: ["party_a"]
+        - type: "arbitration"
+          policy_id: "<optional-policy>"
+    total_failure:
+      outcome: "oracle_failure_expiry"
+
+outcomes:
+  - id: "successful_completion"
+    when:
+      all:
+        - "oracle.delivery.status == delivered"
+        - "commitment.buyer_receipt_secret == revealed_and_valid"
+    allocations:
+      - participant: "party_b"
+        amount: "sale_price"
+        destination: "settlement_address"
+      - participant: "party_a"
+        amount: "buyer_remaining_balance"
+        destination: "refund_address"
+      - participant: "party_b"
+        amount: "seller_remaining_collateral"
+        destination: "refund_address"
+    terminal: true
+
+  - id: "oracle_failure_expiry"
+    when:
+      all:
+        - "contract.expired == true"
+        - "oracle.delivery.exhausted == true"
+    allocations:
+      # Exact policy is contract-specific and must be agreed before activation.
+      - participant: "party_a"
+        amount: "<agreed-amount>"
+        destination: "refund_address"
+      - participant: "party_b"
+        amount: "<agreed-amount>"
+        destination: "refund_address"
+    terminal: true
+
+state:
+  genesis_state_hash: "<canonical-genesis-state-hash>"
+  previous_state_hash: null
+  state_version: 0
+  status: "draft"
+
+head_resolution:
+  resolver_scheme: "bitscrow"
+  resolver_uri: "bitscrow://<stable-contract-id>/head"
+  # HEAD is mutable operational metadata returned as a signed record.
+  # The immutable contract stores the resolver, not a future HEAD hash.
+
+execution:
+  reference_implementation: "rust"
+  interpreter:
+    protocol_version: "0.1.0"
+    artifact_digest: "<optional-content-digest>"
+  compute_budget_sats: <budget>
+  storage_budget_sats: <budget>
+
+signatures:
+  - participant: "party_a"
+    signature: null
+  - participant: "party_b"
+    signature: null
