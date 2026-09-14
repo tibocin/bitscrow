@@ -6,6 +6,8 @@ Before implementing Bitcoin-specific assumptions, document the Bitcoin Blake2b f
 
 Deliverable: a compatibility matrix and Rust test vectors.
 
+Status (2026-09-14, `tkt:bitscrow-p0-matrix`): matrix lives in `docs/fork_capability_matrix.md`. Operator endpoints and blake2b-256 are cited. Most chain semantics remain `unknown`. No CI/regtest fixture.
+
 ## Phase 1 — Open Contract Specification
 
 Define BITSCROW v0.1 with canonical serialization, schema validation, participants, roles, contributions, refund destinations, outcomes, expiration, chain anchors, oracle policies, evidence hashes, signatures, and state references.

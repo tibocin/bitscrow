@@ -29,6 +29,8 @@ The first use case is a two-party physical-goods transaction:
 - `docs/system_architecture.md`
 - `docs/product_roadmap.md`
 - `docs/contract_template.yaml`
+- `docs/fork_capability_matrix.md` — Phase 0 cited vs unknown
+- `docs/fixtures/` — offline authoring stubs (never hit the node)
 
 ## Implementation Direction
 
@@ -49,4 +51,4 @@ Agent contract: [`AGENTS.md`](AGENTS.md).
 
 ## Status
 
-Early architecture and protocol design. Do not use with production funds until the transaction model, cryptography, key management, consensus/fork compatibility, and failure recovery paths have undergone extensive review and testing.
+Phase 0 audit is in-tree (`tkt:bitscrow-p0-matrix`). BITSCROW contract-state digest is **blake2b-256**. Fork tx/block hash, network id, and script/tx semantics stay **unknown** until authenticated RPC. CI does not call the node. Do not use with production funds.

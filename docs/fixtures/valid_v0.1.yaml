@@ -1,42 +1,43 @@
-# BITSCROW v0.1 authoring example.
-# YAML is human-friendly input. Implementations should canonicalize the
-# validated data model before computing contract/state hashes.
+# File: docs/fixtures/valid_v0.1.yaml
+# Purpose: Offline valid marketplace authoring example (placeholders, not keys).
+# Related: docs/contract_template.yaml, crates/bitscrow-spec
+# Tags: #fixture #v0.1 #phase0
+#
+# Do not execute against the fork node. network is an authoring placeholder.
 
 protocol:
   name: "bitscrow"
   version: "0.1.0"
-  # Authoring placeholder until Phase 0 cites the fork's getnetworkinfo name.
   network: "bitcoin-blake2b"
   digest_alg: "blake2b-256"
   canon_profile: "bitscrow-jcs-v0"
-  contract_id: "<stable-contract-id>"
+  contract_id: "01jtest00000000000000000000"
   contract_type: "marketplace_escrow"
 
 metadata:
-  created_at: "<rfc3339>"
-  expires_at: "<rfc3339>"
-  title: "<human-readable-title>"
-  description: "<human-readable-description>"
+  created_at: "2026-09-14T00:00:00Z"
+  expires_at: "2026-10-14T00:00:00Z"
+  title: "fixture physical-goods escrow"
+  description: "Offline QA fixture. Not a live contract."
 
 chain_anchor:
-  block_height: <height>
-  block_hash: "<validated-block-hash>"
+  block_height: 0
+  block_hash: "00"
   confirmations_required: 6
 
 participants:
   - id: "party_a"
     role: "buyer"
-    signing_public_key: "<public-key>"
-    settlement_address: "<fresh-address>"
-    refund_address: "<fresh-refund-address>"
+    signing_public_key: "02aaa"
+    settlement_address: "addr_a_settle"
+    refund_address: "addr_a_refund"
     required_contribution_sats: 250000
     collateral_sats: 50000
-
   - id: "party_b"
     role: "seller"
-    signing_public_key: "<public-key>"
-    settlement_address: "<fresh-address>"
-    refund_address: "<fresh-refund-address>"
+    signing_public_key: "02bbb"
+    settlement_address: "addr_b_settle"
+    refund_address: "addr_b_refund"
     required_contribution_sats: 50000
     collateral_sats: 50000
 
@@ -60,27 +61,20 @@ commitments:
   - id: "buyer_receipt_secret"
     owner: "party_a"
     algorithm: "blake2b-256"
-    commitment: "<hash-of-secret>"
+    commitment: "aa"
     plaintext_secret: null
 
 oracles:
   - id: "delivery"
     subject: "shipment_delivery"
     primary:
-      adapter: "<carrier-api-adapter>"
+      adapter: "fixture-adapter"
       parameters:
-        tracking_reference: "<tracking-reference>"
+        tracking_reference: "fixture-track"
     fallback:
       ordered_steps:
-        - type: "secondary_oracle"
-          adapter: "<secondary-adapter>"
-        - type: "preapproved_query"
-          portal: "<bitscrow-verification-portal>"
-          query_template: "<agreed-query-template>"
         - type: "participant_confirmation"
           required_participants: ["party_a"]
-        - type: "arbitration"
-          policy_id: "<optional-policy>"
     total_failure:
       outcome: "oracle_failure_expiry"
 
@@ -97,45 +91,38 @@ outcomes:
       - participant: "party_a"
         amount: "buyer_remaining_balance"
         destination: "refund_address"
-      - participant: "party_b"
-        amount: "seller_remaining_collateral"
-        destination: "refund_address"
     terminal: true
-
   - id: "oracle_failure_expiry"
     when:
       all:
         - "contract.expired == true"
         - "oracle.delivery.exhausted == true"
     allocations:
-      # Exact policy is contract-specific and must be agreed before activation.
       - participant: "party_a"
-        amount: "<agreed-amount>"
+        amount: 300000
         destination: "refund_address"
       - participant: "party_b"
-        amount: "<agreed-amount>"
+        amount: 50000
         destination: "refund_address"
     terminal: true
 
 state:
-  genesis_state_hash: "<canonical-genesis-state-hash>"
+  genesis_state_hash: null
   previous_state_hash: null
   state_version: 0
   status: "draft"
 
 head_resolution:
   resolver_scheme: "bitscrow"
-  resolver_uri: "bitscrow://<stable-contract-id>/head"
-  # HEAD is mutable operational metadata returned as a signed record.
-  # The immutable contract stores the resolver, not a future HEAD hash.
+  resolver_uri: "bitscrow://01jtest00000000000000000000/head"
 
 execution:
   reference_implementation: "rust"
   interpreter:
     protocol_version: "0.1.0"
-    artifact_digest: "<optional-content-digest>"
-  compute_budget_sats: <budget>
-  storage_budget_sats: <budget>
+    artifact_digest: null
+  compute_budget_sats: 0
+  storage_budget_sats: 0
 
 signatures:
   - participant: "party_a"

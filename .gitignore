@@ -1,0 +1,31 @@
+# File: .gitignore
+# Purpose: Keep wallets, RPC cookies, env secrets, and build junk out of git.
+# Related: docs/fork_capability_matrix.md, .env.example, .github/workflows/ci.yml
+# Tags: #gitignore #secrets #devops
+
+# Rust
+/target
+**/*.rs.bk
+Cargo.lock.bak
+
+# Env and local operator config (never commit RPC passwords)
+.env
+.env.*
+!.env.example
+!.env.op.example
+
+# Keys, wallets, Bitcoin-style RPC cookies
+*.pem
+*.key
+*.p12
+wallet.dat
+*.cookie
+.cookie
+*.mnemonic
+*.seed
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
