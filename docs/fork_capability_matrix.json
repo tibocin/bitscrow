@@ -1,0 +1,120 @@
+{
+  "work_id": "tkt:bitscrow-p0-matrix",
+  "probed_at": "2026-09-14T07:09:37Z",
+  "ci_must_not_call_node": true,
+  "digest_alg_bitscrow": "blake2b-256",
+  "rows": [
+    {
+      "id": "rpc-endpoints",
+      "title": "Node RPC location",
+      "status": "cited",
+      "source": "operator 2026-09-14",
+      "value": "LAN https://<lan-host>:<rpc-port> ; Tor https://<rpc-onion>.onion",
+      "notes": "Transports cited; live hosts are locators (gitignored / vault). CI must not connect."
+    },
+    {
+      "id": "rpc-transport",
+      "title": "RPC transport",
+      "status": "cited",
+      "source": "unauthenticated probe 2026-09-14T07:09:37Z",
+      "value": "JSON-RPC POST-only; HTTP 307 to HTTPS; TLS 1.3; Basic realm=jsonrpc; 401 without credentials",
+      "notes": "GET body: JSONRPC server handles only POST requests. Cert CN=localhost O=Start9 OU=StartOS."
+    },
+    {
+      "id": "network-id",
+      "title": "Network / fork identifier",
+      "status": "unknown",
+      "source": "needs authenticated getnetworkinfo",
+      "value": null,
+      "notes": "Template network bitcoin-blake2b is an authoring placeholder, not a probed chain name."
+    },
+    {
+      "id": "tx-format",
+      "title": "Transaction format",
+      "status": "unknown",
+      "source": null,
+      "value": null,
+      "notes": "Do not assume Bitcoin Core serialization."
+    },
+    {
+      "id": "address-key-format",
+      "title": "Address and key formats",
+      "status": "unknown",
+      "source": null,
+      "value": null,
+      "notes": "Spec treats addresses and pubkeys as opaque strings."
+    },
+    {
+      "id": "script-capabilities",
+      "title": "Script capabilities",
+      "status": "unknown",
+      "source": null,
+      "value": null,
+      "notes": "Do not assume Bitcoin Core script or Taproot."
+    },
+    {
+      "id": "sighash",
+      "title": "Signature hashing",
+      "status": "unknown",
+      "source": null,
+      "value": null,
+      "notes": "Do not assume Core sighash types."
+    },
+    {
+      "id": "multisig",
+      "title": "Multisig support",
+      "status": "unknown",
+      "source": null,
+      "value": null,
+      "notes": "Phase 3+."
+    },
+    {
+      "id": "timelocks",
+      "title": "Timelocks",
+      "status": "unknown",
+      "source": null,
+      "value": null,
+      "notes": "Phase 3+."
+    },
+    {
+      "id": "partial-sign",
+      "title": "Partial-signing / PSBT-like",
+      "status": "unknown",
+      "source": null,
+      "value": null,
+      "notes": "Do not assume Bitcoin Core PSBT."
+    },
+    {
+      "id": "reorg",
+      "title": "Reorg behavior",
+      "status": "unknown",
+      "source": null,
+      "value": null,
+      "notes": "Architecture: block anchors are chain context, not wall-clock."
+    },
+    {
+      "id": "test-regtest",
+      "title": "Test / regtest environment",
+      "status": "cited",
+      "source": "operator Q3 2026-09-14",
+      "value": "none",
+      "notes": "No existing CI/regtest fixture. Offline fixtures only."
+    },
+    {
+      "id": "bitscrow-digest",
+      "title": "BITSCROW contract-state digest",
+      "status": "cited",
+      "source": "operator Q2 2026-09-14 + docs/contract_template.yaml commitments.algorithm",
+      "value": "blake2b-256",
+      "notes": "Unkeyed BLAKE2b, 32-byte digest of canonical contract state. Same primitive as fork PoW (blake2b-256) but a different message. Not blake2s, not blake2b-512, not a keyed MAC."
+    },
+    {
+      "id": "fork-consensus-hash",
+      "title": "Fork txid / block hash algorithm",
+      "status": "cited",
+      "source": "Knots v29.4.1.knots20260508 src/primitives/block.cpp GetHash + src/crypto/blake2b.h blake2b_nokey; Knots PR 385 independent recompute of height 961640; bitcoin-blake2b.org developers (first BLAKE2b block 961640, 30 Aug 2026)",
+      "value": "txid/wtxid: SHA256d (unchanged). Block hash from height 961640: unkeyed BLAKE2b-256 (blake2b_nokey, outlen=32), two-pass Knots header-v2 construction over an 80-byte ASIC work header, not a single hash of the 164-byte wire header. Not blake2s, not blake2b-512, not keyed, not Sia personalization.",
+      "notes": "Pre-961640 blocks on this branch remain SHA256d. Do not treat bitscrow-digest as the block hash. Merkle root feeding H1 is still SHA256d."
+    }
+  ]
+}

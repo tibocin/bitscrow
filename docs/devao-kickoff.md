@@ -37,6 +37,7 @@ Facts already in those docs:
   - Repo today is design-only (no crates, no portal, no chain adapter)
   - Agents never receive private keys; fail closed; UTXO-first
   - Do not assume Bitcoin Core Taproot/PSBT/script semantics match this fork
+  - Privacy-first locators: never paste live onion/LAN RPC hosts (placeholders / op:// only)
 
 First slice to plan (pick one, recommend safest that still moves spec):
   A. Phase 0 only — fork capability matrix + Rust test-vector stubs, no crates
@@ -52,14 +53,14 @@ Non-goals for this council pass:
 Council must produce:
   - Product: MVP in/out, acceptance, non-goals
   - Architecture: short RFC (spec crate boundaries, canonicalization, hash algorithm choice as an open risk if unaudited)
-  - DevOps/Security: no secrets in git; signer isolation; env = test/regtest only
+  - DevOps/Security: no secrets or live node locators in git; signer isolation; env = test/regtest only
   - QA: how we will test spec validation and state hashes without a live fork
   - work_ids (tkt:/story:) for the first implementation ticket after I say go
   - PromptEnvelope paths for the next owners
   - Chalkboard handoffs with model_class (think for RFC, build only after my go)
 
 Open questions to record, not guess:
-  1. Where is the Blake2b fork node/RPC and what is its network identifier?
+  1. Node RPC transport (LAN vs Tor) — record with placeholders, never a live host. Network identifier still unknown until a human probe.
   2. Which hash (blake2b-256 vs other) is consensus-canonical for contract state?
   3. Is there an existing regtest/test fixture we can point CI at?
 

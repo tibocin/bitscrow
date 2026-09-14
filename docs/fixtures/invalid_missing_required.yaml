@@ -1,0 +1,40 @@
+# File: docs/fixtures/invalid_missing_required.yaml
+# Purpose: Same as valid_v0.1 but protocol.version is omitted (must fail validation).
+# Related: valid_v0.1.yaml, crates/bitscrow-spec
+# Tags: #fixture #invalid #phase0
+
+protocol:
+  name: "bitscrow"
+  network: "bitcoin-blake2b"
+  digest_alg: "blake2b-256"
+  canon_profile: "bitscrow-jcs-v0"
+  contract_id: "01jtest00000000000000000000"
+  contract_type: "marketplace_escrow"
+
+metadata:
+  created_at: "2026-09-14T00:00:00Z"
+  expires_at: "2026-10-14T00:00:00Z"
+  title: "missing version"
+  description: "Invalid: no protocol.version"
+
+participants:
+  - id: "party_a"
+    role: "buyer"
+    signing_public_key: "02aaa"
+    settlement_address: "addr_a_settle"
+    refund_address: "addr_a_refund"
+    required_contribution_sats: 1
+    collateral_sats: 0
+
+funding:
+  currency: "sats"
+  required_total_sats: 1
+  funding_policy:
+    activation: "all_required_contributions_confirmed"
+  outpoints: []
+
+state:
+  genesis_state_hash: null
+  previous_state_hash: null
+  state_version: 0
+  status: "draft"

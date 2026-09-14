@@ -1,0 +1,17 @@
+# File: docs/fixtures/invalid_dirty.yaml
+# Purpose: YAML merge key — fail closed. Not a valid BITSCROW document.
+# Related: crates/bitscrow-spec, scripts/check_phase0.py
+# Tags: #fixture #yaml #fail-closed
+
+protocol:
+  name: "bitscrow"
+  version: "0.1.0"
+  digest_alg: "blake2b-256"
+  canon_profile: "bitscrow-jcs-v0"
+
+base: &base
+  role: "buyer"
+
+participants:
+  - <<: *base
+    id: "party_a"
