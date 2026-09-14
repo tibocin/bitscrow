@@ -14,7 +14,12 @@ This is the **product repo**. The shop is the sibling **`devao`** standards spin
 1. Open `devao` and `bitscrow` in the same Cursor workspace.
 2. Tell the agent: **“Use the BITSCROW pack.”**
 3. Paste `docs/devao-kickoff.md` (same text as `devao/packs/bitscrow/KICKOFF.md`).
-4. Run `/run-council`. Do not scaffold crates until the human confirms the plan.
+4. Run `/run-council` with `--target-root` pointed at this checkout so chalkboard,
+   traces, and the tracked brief land here (not only in the shop).
+5. Do not scaffold crates until the human confirms the plan.
+
+Live `.devao/` JSON is gitignored. Commit `docs/devao/sessions/<session_id>.md`
+and `.devao/agent-graph.json`. Do not vendor `packages/agent-os`.
 
 Canonical pack: `devao/packs/bitscrow/AGENTS.md`. Product facts live in this repo’s
 `README.md` and `docs/`. Digi and Dossierium stay off.

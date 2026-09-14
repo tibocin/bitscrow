@@ -44,8 +44,12 @@ BITSCROW is built through the sibling **DEVAO** shop (council + agent-os), not a
 
 1. Open `devao` and `bitscrow` in the same Cursor workspace.
 2. Say **“Use the BITSCROW pack.”**
-3. Paste the prompt in [`docs/devao-kickoff.md`](docs/devao-kickoff.md) and run `/run-council`.
+3. Paste the prompt in [`docs/devao-kickoff.md`](docs/devao-kickoff.md) and run `/run-council`
+   with `--target-root` pointed at this checkout.
 4. Confirm the Phase 0+1 plan before any Rust crates land.
+
+Council runtime lives in this repo (`.devao/` gitignored; tracked briefs under
+`docs/devao/sessions/`). Contracts stay in the sibling DEVAO shop.
 
 Agent contract: [`AGENTS.md`](AGENTS.md).
 

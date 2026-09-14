@@ -19,10 +19,20 @@ Do not use the Dossierium pack. Digi is off. target_system=git.
 I want to build BITSCROW with DEVAO. Run /run-council first.
 Do not implement yet. Stop after a consolidated plan and wait for my go.
 
-Seed:
+Seed (run from the DEVAO spine; runtime files land in this product repo):
   session_id: bitscrow-kickoff-20260914
   --pack bitscrow
+  --target-root /path/to/bitscrow
   --goal "Plan BITSCROW Phase 0+1: Blake2b fork capability matrix + v0.1 spec; no production funds"
+
+  uv run --project packages/agent-os python -m devao_agent_os.seed \
+    --session-id bitscrow-kickoff-20260914 \
+    --pack bitscrow \
+    --target-root /path/to/bitscrow \
+    --goal "Plan BITSCROW Phase 0+1: Blake2b fork capability matrix + v0.1 spec; no production funds"
+
+  uv run --project packages/agent-os python -m devao_agent_os.board render \
+    --session-id bitscrow-kickoff-20260914 --target-root /path/to/bitscrow
 
 Product (do not invent beyond these docs):
   - bitscrow/README.md
