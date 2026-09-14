@@ -36,6 +36,17 @@ The core protocol and settlement engine should be implemented in Rust with deter
 
 The specification should remain open and portable so independent implementations can validate compatible BITSCROW contracts.
 
+## Build with DEVAO
+
+BITSCROW is built through the sibling **DEVAO** shop (council + agent-os), not as a one-off chat.
+
+1. Open `devao` and `bitscrow` in the same Cursor workspace.
+2. Say **“Use the BITSCROW pack.”**
+3. Paste the prompt in [`docs/devao-kickoff.md`](docs/devao-kickoff.md) and run `/run-council`.
+4. Confirm the Phase 0+1 plan before any Rust crates land.
+
+Agent contract: [`AGENTS.md`](AGENTS.md).
+
 ## Status
 
 Early architecture and protocol design. Do not use with production funds until the transaction model, cryptography, key management, consensus/fork compatibility, and failure recovery paths have undergone extensive review and testing.
