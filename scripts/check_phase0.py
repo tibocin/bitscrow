@@ -47,7 +47,22 @@ RFC1918_HOST = re.compile(
     r"|192\.168\.\d{1,3}\.\d{1,3}"
     r"|172\.(?:1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3})\b"
 )
+# Only a real prefix length after '/' is CIDR; "/rpc" is a locator path.
+CIDR_SUFFIX = re.compile(r"^/(?:3[0-2]|[12][0-9]|[0-9])(?:\D|$)")
+RPC_URL_ASSIGN = re.compile(r"(?m)^[ \t]*BITSCROW_RPC_URL[ \t]*=[ \t]*(\S+)")
 SKIP_SUFFIX = {".png", ".jpg", ".woff", ".woff2"}
+
+
+def is_cidr_suffix(text: str, host_end: int) -> bool:
+    """True when host_end is followed by /0../32, not a URL path."""
+    return CIDR_SUFFIX.match(text[host_end:]) is not None
+
+
+def is_allowed_rpc_url(value: str) -> bool:
+    """Placeholders and op:// refs only — never a live host."""
+    if value.startswith("op://"):
+        return True
+    return "<" in value and ">" in value
 
 
 def fail(msg: str) -> None:
@@ -137,13 +152,29 @@ def check_text_locators(path: Path, text: str) -> None:
     if ONION_V3.search(text):
         fail(f"live v3 onion locator in {rel}")
     for match in RFC1918_HOST.finditer(text):
-        end = match.end()
-        if end < len(text) and text[end] == "/":
+        if is_cidr_suffix(text, match.end()):
             continue
         fail(f"RFC1918 host locator in {rel}")
+    for match in RPC_URL_ASSIGN.finditer(text):
+        value = match.group(1)
+        if is_allowed_rpc_url(value):
+            continue
+        fail(f"live BITSCROW_RPC_URL host in {rel}")
+
+
+def _self_test() -> None:
+    """Inline gates for CIDR vs path and public RPC assignments."""
+    lan = ".".join(["192", "168", "1", "20"])
+    assert not is_cidr_suffix(f"{lan}/rpc", len(lan))
+    cidr_host = ".".join(["10", "0", "0", "0"])
+    assert is_cidr_suffix(f"{cidr_host}/16", len(cidr_host))
+    assert is_allowed_rpc_url("https://<lan-host>:<rpc-port>")
+    assert is_allowed_rpc_url("op://vault/item/url")
+    assert not is_allowed_rpc_url("https://rpc." + "example.com")
 
 
 def main() -> int:
+    _self_test()
     check_matrix()
     check_fixtures()
     check_secrets()
