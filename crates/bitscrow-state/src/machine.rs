@@ -78,9 +78,13 @@ pub fn apply(
     if now < head.updated_at.as_str() {
         return Err(StateError::ClockRewind);
     }
+    let (payload_evidence, payload_outcome, payload_chain_hint) = event.record_payload();
     if head.last_record.event_kind == event.kind_name()
         && &head.last_record.actor == actor
         && head.last_record.timestamp == now
+        && head.last_record.evidence_refs == payload_evidence
+        && head.last_record.outcome_id == payload_outcome
+        && head.last_record.chain_hint == payload_chain_hint
     {
         return Ok(head.clone());
     }
@@ -96,13 +100,14 @@ pub fn apply(
         transition::resolve(contract, head, event, actor)?;
 
     let prev_hex = Some(head.digest.to_hex());
+    let chain_hint = payload_chain_hint;
     let record = TransitionRecord {
         prev_digest_hex: prev_hex.clone(),
         event_kind: event.kind_name().into(),
         actor: actor.clone(),
         evidence_refs: evidence_refs.clone(),
         timestamp: now.into(),
-        chain_hint: None,
+        chain_hint: chain_hint.clone(),
         outcome_id: outcome_id.clone(),
     };
     let version = head.version + 1;
@@ -116,7 +121,7 @@ pub fn apply(
         actor: actor.clone(),
         evidence_refs,
         timestamp: now.into(),
-        chain_hint: None,
+        chain_hint,
         outcome_id,
         resume_status: resume,
     };

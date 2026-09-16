@@ -52,6 +52,19 @@ impl TransitionEvent {
         }
     }
 
+    /// Evidence, outcome, and chain-hint fields stored on each revision for hashing.
+    pub fn record_payload(&self) -> (Vec<String>, Option<String>, Option<String>) {
+        match self {
+            Self::SubmitEvidence { evidence_id } => (vec![evidence_id.clone()], None, None),
+            Self::Close { outcome_id } => (vec![], Some(outcome_id.clone()), None),
+            Self::FundingStubObserved { opaque_ref }
+            | Self::ActivationStubGranted { opaque_ref }
+            | Self::SettleStubAcknowledged { opaque_ref } => (vec![], None, Some(opaque_ref.clone())),
+            Self::EnterOracleFallback { step } => (vec![], None, Some(step.clone())),
+            _ => (vec![], None, None),
+        }
+    }
+
     /// Stub funding/settle/activation — rejected while in Recovery.
     pub fn is_fund_moving_stub(&self) -> bool {
         matches!(
