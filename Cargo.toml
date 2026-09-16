@@ -1,0 +1,12 @@
+# File: Cargo.toml
+# Purpose: BITSCROW Rust workspace (Phase 1–2: spec + state).
+# Related: crates/bitscrow-spec, crates/bitscrow-state, docs/system_architecture.md §12
+# Tags: #workspace #rust #bitscrow
+[workspace]
+resolver = "2"
+members = ["crates/bitscrow-spec", "crates/bitscrow-state"]
+
+[workspace.package]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+rust-version = "1.75"

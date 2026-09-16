@@ -14,9 +14,13 @@ Define BITSCROW v0.1 with canonical serialization, schema validation, participan
 
 YAML is the authoring format; canonical machine hashing should use a deterministic representation rather than hashing arbitrary YAML text.
 
+Status (2026-09-15, `tkt:bitscrow-spec-crate`): `crates/bitscrow-spec` parses fixtures, applies `bitscrow-jcs-v0` (RFC 8785), and digests with unkeyed blake2b-256. Offline CI job `spec` added. Golden digest hex and second-impl cross-check remain story-level follow-ups.
+
 ## Phase 2 — Rust State Machine
 
-Implement `bitscrow-spec` and `bitscrow-state` crates. No real funds. Exhaustively test valid/invalid transitions, expiration, fallback behavior, and deterministic state hashes.
+Implement `bitscrow-state` (and keep evolving `bitscrow-spec`). No real funds. Exhaustively test valid/invalid transitions, expiration, fallback behavior, and deterministic state hashes.
+
+Status (2026-09-15, `tkt:bitscrow-state-crate`): `crates/bitscrow-state` offline FSM on `bitscrow-spec`; stub FUNDING/ACTIVE/SETTLING; `RECOVERY` stub-entry-only; CI job `state`. Second-impl hash cross-check deferred (`story:state-hash-crosscheck`).
 
 ## Phase 3 — Chain + Transaction Prototype
 
