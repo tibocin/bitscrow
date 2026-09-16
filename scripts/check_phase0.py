@@ -48,8 +48,8 @@ RFC1918_HOST = re.compile(
     r"|192\.168\.\d{1,3}\.\d{1,3}"
     r"|172\.(?:1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3})\b"
 )
-# Only a real prefix length after '/' is CIDR; "/rpc" is a locator path.
-CIDR_SUFFIX = re.compile(r"^/(?:3[0-2]|[12][0-9]|[0-9])(?:\D|$)")
+# Only a real prefix length after '/' is CIDR; "/rpc" or "/16/rpc" are paths.
+CIDR_SUFFIX = re.compile(r"^/(?:3[0-2]|[12][0-9]|[0-9])(?!/|\d)")
 RPC_URL_ASSIGN = re.compile(
     r"(?m)^[ \t]*(?:export[ \t]+)?BITSCROW_RPC_URL[ \t]*=[ \t]*(\S+)"
 )
@@ -59,7 +59,7 @@ SKIP_SUFFIX = {".png", ".jpg", ".woff", ".woff2"}
 
 
 def is_cidr_suffix(text: str, host_end: int) -> bool:
-    """True when host_end is followed by /0../32, not a URL path."""
+    """True only for /0../32 at end of token — not a URL path segment."""
     return CIDR_SUFFIX.match(text[host_end:]) is not None
 
 
@@ -184,10 +184,13 @@ def _self_test() -> None:
     assert not is_cidr_suffix(f"{lan}/rpc", len(lan))
     cidr_host = ".".join(["10", "0", "0", "0"])
     assert is_cidr_suffix(f"{cidr_host}/16", len(cidr_host))
+    path_host = ".".join(["10", "0", "0", "1"])
+    assert not is_cidr_suffix(f"{path_host}/16/rpc", len(path_host))
     assert is_allowed_rpc_url("https://<lan-host>:<rpc-port>")
     assert is_allowed_rpc_url("https://<rpc-onion>.onion")
     assert is_allowed_rpc_url("op://vault/item/url")
     assert not is_allowed_rpc_url("https://rpc." + "example.com")
+    assert not is_allowed_rpc_url("https://rpc." + "example.com/<project>")
     assert not is_allowed_rpc_url("https://node.example.com:<rpc-port>")
     assert RPC_URL_ASSIGN.search("export BITSCROW_RPC_URL=https://rpc.example.com")
 
