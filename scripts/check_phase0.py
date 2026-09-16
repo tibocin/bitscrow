@@ -13,6 +13,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 MATRIX = ROOT / "docs" / "fork_capability_matrix.json"
@@ -49,7 +50,11 @@ RFC1918_HOST = re.compile(
 )
 # Only a real prefix length after '/' is CIDR; "/rpc" is a locator path.
 CIDR_SUFFIX = re.compile(r"^/(?:3[0-2]|[12][0-9]|[0-9])(?:\D|$)")
-RPC_URL_ASSIGN = re.compile(r"(?m)^[ \t]*BITSCROW_RPC_URL[ \t]*=[ \t]*(\S+)")
+RPC_URL_ASSIGN = re.compile(
+    r"(?m)^[ \t]*(?:export[ \t]+)?BITSCROW_RPC_URL[ \t]*=[ \t]*(\S+)"
+)
+PLACEHOLDER_HOST = re.compile(r"^<[^>]+>(?:\.onion)?$")
+PLACEHOLDER_PORT = re.compile(r"^<[^>]+>$")
 SKIP_SUFFIX = {".png", ".jpg", ".woff", ".woff2"}
 
 
@@ -62,7 +67,18 @@ def is_allowed_rpc_url(value: str) -> bool:
     """Placeholders and op:// refs only — never a live host."""
     if value.startswith("op://"):
         return True
-    return "<" in value and ">" in value
+    parsed = urlparse(value)
+    if parsed.scheme not in ("http", "https") or not parsed.netloc:
+        return False
+    if ":" in parsed.netloc:
+        host, port = parsed.netloc.rsplit(":", 1)
+    else:
+        host, port = parsed.netloc, None
+    if not PLACEHOLDER_HOST.match(host):
+        return False
+    if port is not None and not PLACEHOLDER_PORT.match(port):
+        return False
+    return True
 
 
 def fail(msg: str) -> None:
@@ -169,8 +185,11 @@ def _self_test() -> None:
     cidr_host = ".".join(["10", "0", "0", "0"])
     assert is_cidr_suffix(f"{cidr_host}/16", len(cidr_host))
     assert is_allowed_rpc_url("https://<lan-host>:<rpc-port>")
+    assert is_allowed_rpc_url("https://<rpc-onion>.onion")
     assert is_allowed_rpc_url("op://vault/item/url")
     assert not is_allowed_rpc_url("https://rpc." + "example.com")
+    assert not is_allowed_rpc_url("https://node.example.com:<rpc-port>")
+    assert RPC_URL_ASSIGN.search("export BITSCROW_RPC_URL=https://rpc.example.com")
 
 
 def main() -> int:
