@@ -60,14 +60,15 @@ Phase 0 audit is in-tree (`tkt:bitscrow-p0-matrix`). Phase 1 `bitscrow-spec`
 (RFC 8785), and digests with unkeyed **blake2b-256** (32 bytes). Phase 2
 `bitscrow-state` (`tkt:bitscrow-state-crate`) is an offline lifecycle FSM with
 stub funding/settle events and deterministic state hashes (no chain adapter).
-Fork **block** hash from height 961640 is the same primitive over Knots header-v2
-work (different message). Network id and script/tx semantics stay **unknown**
-until authenticated RPC. CI does not call the node. Do not use with production
-funds.
+Fork **block** hash from height 961640 is unkeyed **BLAKE2b-256**
+(`blake2b_nokey`, 32-byte output) over Knots header-v2 work, not SHA256d and
+not a single hash of the 164-byte header (different message from the contract
+digest). Txid stays SHA256d. Network id and script/tx semantics stay
+**unknown** until authenticated RPC. CI does not call the node. Do not use with
+production funds.
 
 ```bash
 cargo test -p bitscrow-spec
 cargo test -p bitscrow-state
 uv run python scripts/check_phase0.py
 ```
-
