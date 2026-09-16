@@ -103,3 +103,38 @@ fn cp6_distinct_events_distinct_hashes() {
     assert_ne!(p.digest, a.digest);
     assert_ne!(h.digest, p.digest);
 }
+
+#[test]
+fn cp6b_distinct_opaque_refs_distinct_hashes() {
+    let c = contract();
+    let mut h = genesis(&c, "2026-09-15T00:00:00Z", &party_a()).unwrap();
+    let stub = bitscrow_state::Actor::TestStub;
+    h = step(&c, &h, TransitionEvent::Propose, party_a(), "2026-09-15T00:01:00Z");
+    h = step(&c, &h, TransitionEvent::Accept, party_a(), "2026-09-15T00:02:00Z");
+    h = step(&c, &h, TransitionEvent::EnterFunding, party_a(), "2026-09-15T00:03:00Z");
+    let a = step(
+        &c,
+        &h,
+        TransitionEvent::FundingStubObserved {
+            opaque_ref: "fund-a".into(),
+        },
+        stub.clone(),
+        "2026-09-15T00:04:00Z",
+    );
+    // Same clock tick, different stub ref must not collapse to a no-op.
+    let b = apply(
+        &c,
+        &a,
+        &TransitionEvent::FundingStubObserved {
+            opaque_ref: "fund-b".into(),
+        },
+        &stub,
+        "2026-09-15T00:04:00Z",
+        Some(&a.digest),
+    )
+    .unwrap();
+    assert_ne!(a.digest, b.digest);
+    assert_eq!(a.last_record.chain_hint.as_deref(), Some("fund-a"));
+    assert_eq!(b.last_record.chain_hint.as_deref(), Some("fund-b"));
+    assert_eq!(b.version, a.version + 1);
+}
