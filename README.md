@@ -31,6 +31,12 @@ The first use case is a two-party physical-goods transaction:
 - `docs/contract_template.yaml`
 - `docs/fork_capability_matrix.md` — Phase 0 cited vs unknown
 - `docs/fixtures/` — offline authoring stubs (never hit the node)
+- `docs/ops/glitchtip.md` — GlitchTip DSN env contract (`op://` only; human go)
+
+## Operator env
+
+- `.env.example` — RPC + `GLITCHTIP_DSN_{LOCAL,STAGING,PROD}` names/placeholders
+- `.env.op.example` — 1Password refs for `op run` (copy to gitignored `.env.op`)
 
 ## Implementation Direction
 

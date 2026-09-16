@@ -32,5 +32,9 @@ Canonical pack: `devao/packs/bitscrow/AGENTS.md`. Product facts live in this rep
   Placeholders only (`https://<rpc-onion>.onion`, `https://<lan-host>:<rpc-port>`).
   Real URLs stay in gitignored `.env` / 1Password. Shop policy:
   `devao/docs/policies/bitcoin-privacy.md`.
+- GlitchTip DSN: commit only empty / angle-bracket placeholders or `op://`
+  path shapes (`.env.example`, `.env.op.example`). Never a live DSN. Product
+  checklist: `docs/ops/glitchtip.md`. Shop HITL:
+  `devao/docs/governance/runtime-obs-glitchtip-setup.md`.
 - Do not assume Bitcoin Core Taproot/PSBT semantics on the Blake2b fork.
 - First slice is Phase 0 (fork audit) and Phase 1 (v0.1 spec), not the portal.
