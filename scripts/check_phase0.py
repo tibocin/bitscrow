@@ -1,7 +1,7 @@
 # File: scripts/check_phase0.py
 # Purpose: Offline Phase 0 gates: matrix rows, fixture presence, secret and locator patterns.
-# Related: docs/fork_capability_matrix.json, docs/fixtures/, .github/workflows/ci.yml
-# Tags: #phase0 #ci #qa
+# Related: docs/fork_capability_matrix.json, docs/fixtures/, docs/ops/glitchtip.md, .github/workflows/ci.yml
+# Tags: #phase0 #ci #qa #glitchtip
 #
 # Why: QA forbade live-fork CI. This script never opens a socket.
 # Side effects: none. Exit 1 on failure.
@@ -39,6 +39,11 @@ SECRET_PATTERNS = [
     re.compile(r"\bxprv[a-zA-Z0-9]{20,}"),
     re.compile(r"rpcpassword\s*=\s*(?!op://)\S+"),
     re.compile(r"BITSCROW_RPC_PASSWORD=(?!op://)\S+"),
+    # Live GlitchTip/Sentry DSN in git: allow empty, op://, or angle-bracket placeholders.
+    re.compile(
+        r"GLITCHTIP_DSN_(?:LOCAL|STAGING|PROD)=(?!op://)(?!https://<)(?!\s*$)\S+"
+    ),
+    re.compile(r"https://[0-9a-f]{8,}@[^\s/]+/(?:[0-9]+)"),
 ]
 # Live v3 onions and RFC1918 *hosts* (CIDR like 192.168.0.0/16 is allowed).
 ONION_V3 = re.compile(r"\b[a-z2-7]{56}\.onion\b", re.IGNORECASE)
