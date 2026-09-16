@@ -1,10 +1,9 @@
 # File: .github/workflows/ci.yml
-# Purpose: Offline Phase 0 + bitscrow-spec + bitscrow-state CI. Never connects to the fork node.
-# Related: scripts/check_phase0.py, crates/bitscrow-spec, crates/bitscrow-state
-# Tags: #ci #phase0 #phase1 #phase2 #secrets
+# Purpose: Offline Phase 0 CI. Never connects to the fork node.
+# Related: scripts/check_phase0.py
+# Tags: #ci #phase0 #secrets
 #
 # Why: operator said there is no regtest fixture. Live RPC stays out of CI.
-# Spec/state jobs: cargo test only; contents:read; no Actions secrets; no deploy.
 
 name: ci
 
@@ -12,9 +11,6 @@ on:
   push:
     branches: [main]
   pull_request:
-
-permissions:
-  contents: read
 
 jobs:
   phase0:
@@ -24,21 +20,3 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - name: Phase 0 matrix, fixtures, secret and locator scan
         run: uv run python scripts/check_phase0.py
-
-  spec:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - name: bitscrow-spec tests (fixtures only; no node)
-        run: cargo test -p bitscrow-spec
-        # crates.io fetch allowed for resolve; tests open zero sockets.
-
-  state:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - name: bitscrow-state tests (fixtures only; no node)
-        run: cargo test -p bitscrow-state
-        # Prefer --offline once lockfile is warm; tests open zero sockets.

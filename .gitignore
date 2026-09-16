@@ -1,7 +1,7 @@
 # File: .gitignore
 # Purpose: Keep wallets, RPC cookies, env secrets, and build junk out of git.
-# Related: docs/fork_capability_matrix.md, .env.example, sibling shop examples/product-runtime/gitignore.snippet
-# Tags: #gitignore #secrets #devops #dual-root
+# Related: docs/fork_capability_matrix.md, .env.example, .github/workflows/ci.yml
+# Tags: #gitignore #secrets #devops
 
 # Rust
 /target
@@ -29,19 +29,3 @@ wallet.dat
 *.swp
 .idea/
 .vscode/
-
-# DEVAO live runtime — do not commit chalkboards or traces
-# Copied from sibling shop examples/product-runtime/gitignore.snippet
-.devao/chalkboard/*.json
-.devao/traces/*.jsonl
-.devao/bundles/*.json
-.devao/intents/*.json
-.devao/learning/**
-.devao/board/**
-.devao/model-routing.json
-!.devao/chalkboard/.gitkeep
-!.devao/traces/.gitkeep
-!.devao/bundles/.gitkeep
-!.devao/intents/.gitkeep
-!.devao/learning/.gitkeep
-!.devao/board/.gitkeep
