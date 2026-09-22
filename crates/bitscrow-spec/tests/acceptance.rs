@@ -8,15 +8,18 @@
 use bitscrow_spec::{canonicalize, digest, digest_yaml, parse_yaml, SpecError};
 
 const VALID: &str = include_str!("../../../docs/fixtures/valid_v0.1.yaml");
+const GOLDEN_VALID: &str =
+    include_str!("../../../docs/fixtures/valid_v0.1.digest.blake2b-256.hex");
 const MISSING: &str =
     include_str!("../../../docs/fixtures/invalid_missing_required.yaml");
 const DIRTY: &str = include_str!("../../../docs/fixtures/invalid_dirty.yaml");
 
-/// CP1: valid_v0.1.yaml → Digest32 length 32 (unkeyed blake2b-256).
+/// CP1: valid_v0.1.yaml → 32-byte digest matching the committed golden hex.
 #[test]
 fn cp1_valid_yields_digest32() {
     let d = digest_yaml(VALID).expect("valid fixture");
     assert_eq!(d.0.len(), 32);
+    assert_eq!(d.to_hex(), GOLDEN_VALID.trim());
 }
 
 /// CP2: hashing twice is identical.
