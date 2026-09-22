@@ -71,4 +71,5 @@ production funds.
 cargo test -p bitscrow-spec
 cargo test -p bitscrow-state
 uv run python scripts/check_phase0.py
+uv run --with pyyaml==6.0.3 --with rfc8785==0.1.4 python scripts/check_spec_golden.py
 ```
