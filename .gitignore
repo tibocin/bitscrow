@@ -8,6 +8,10 @@
 **/*.rs.bk
 Cargo.lock.bak
 
+# Python checker bytecode
+__pycache__/
+*.pyc
+
 # Env and local operator config (never commit RPC passwords or live hosts)
 .env
 .env.*
