@@ -1,6 +1,6 @@
 # File: .github/workflows/ci.yml
 # Purpose: Offline Phase 0 + bitscrow-spec + bitscrow-state CI. Never connects to the fork node.
-# Related: scripts/check_phase0.py, crates/bitscrow-spec, crates/bitscrow-state
+# Related: scripts/check_phase0.py, scripts/check_spec_golden.py, crates/bitscrow-spec, crates/bitscrow-state
 # Tags: #ci #phase0 #phase1 #phase2 #secrets
 #
 # Why: operator said there is no regtest fixture. Live RPC stays out of CI.
@@ -24,6 +24,8 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - name: Phase 0 matrix, fixtures, secret and locator scan
         run: uv run python scripts/check_phase0.py
+      - name: Python second-model golden (PyPI for pyyaml and rfc8785; no node)
+        run: uv run --with pyyaml==6.0.3 --with rfc8785==0.1.4 python scripts/check_spec_golden.py
 
   spec:
     runs-on: ubuntu-latest

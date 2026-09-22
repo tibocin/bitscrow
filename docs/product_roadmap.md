@@ -14,7 +14,7 @@ Define BITSCROW v0.1 with canonical serialization, schema validation, participan
 
 YAML is the authoring format; canonical machine hashing should use a deterministic representation rather than hashing arbitrary YAML text.
 
-Status (2026-09-15, `tkt:bitscrow-spec-crate`): `crates/bitscrow-spec` parses fixtures, applies `bitscrow-jcs-v0` (RFC 8785), and digests with unkeyed blake2b-256. Offline CI job `spec` added. Golden digest hex and second-impl cross-check remain story-level follow-ups.
+Status (2026-09-21, `tkt:bitscrow-spec-crate`): `crates/bitscrow-spec` parses fixtures, applies `bitscrow-jcs-v0` (RFC 8785), and digests with unkeyed blake2b-256. Offline CI job `spec` added. Golden hex for `valid_v0.1.yaml` is `docs/fixtures/valid_v0.1.digest.blake2b-256.hex`. `scripts/check_spec_golden.py` is a Python mirror of that one fixture (PyYAML, RFC 8785, hashlib). A generated schema shared by both models remains later.
 
 ## Phase 2 — Rust State Machine
 
